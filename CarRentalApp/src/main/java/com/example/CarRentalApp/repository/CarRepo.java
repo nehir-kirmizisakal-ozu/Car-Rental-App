@@ -1,4 +1,10 @@
 package com.example.CarRentalApp.repository;
 
-public class CarRepo {
+import com.example.CarRentalApp.model.Car;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CarRepo extends JpaRepository<Car, Long> {
+
+
+
 }
