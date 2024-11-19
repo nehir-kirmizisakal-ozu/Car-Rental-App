@@ -11,6 +11,7 @@ public class Car {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long barcode;
+    private int id;
     private String licensePlateNumber;
     private int passengerCapacity;
     private String brand;
