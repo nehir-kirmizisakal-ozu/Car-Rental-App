@@ -1,4 +1,7 @@
 package com.example.CarRentalApp.repository;
 
-public class ServiceRepo {
+import com.example.CarRentalApp.model.Service;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ServiceRepo extends JpaRepository<Service, Long> {
 }

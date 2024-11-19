@@ -1,4 +1,7 @@
 package com.example.CarRentalApp.repository;
 
-public class LocationRepo {
+import com.example.CarRentalApp.model.Location;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface LocationRepo extends JpaRepository<Location, Long> {
 }
