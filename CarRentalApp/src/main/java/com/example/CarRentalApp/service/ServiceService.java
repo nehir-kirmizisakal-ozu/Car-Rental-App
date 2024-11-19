@@ -1,12 +1,22 @@
 package com.example.CarRentalApp.service;
 
+import com.example.CarRentalApp.model.Location;
 import com.example.CarRentalApp.model.Service;
+import com.example.CarRentalApp.repository.LocationRepo;
+import com.example.CarRentalApp.repository.ServiceRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.List;
 
-public interface ServiceService {
+public class ServiceService {
 
-    List<Service> getAllServices();
-    Service getServiceByCode(Long code);
-    Service saveService(Service service);
-    void deleteService(Long code);
+    @Autowired
+    private ServiceRepo serviceRepo;
+
+    public Service saveService(Service service) {
+        return serviceRepo.save(service);
+    }
+    public void deleteService(Long id) {
+        serviceRepo.deleteById(id);
+    }
 }
