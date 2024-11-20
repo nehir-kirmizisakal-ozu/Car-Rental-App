@@ -1,16 +1,12 @@
 package com.example.CarRentalApp.model;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Car {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long barcode;
+    private String barcode;
     private String licensePlateNumber;
     private int passengerCapacity;
     private String brand;
@@ -18,11 +14,14 @@ public class Car {
     private double mileage;
     private String transmissionType;
     private double dailyPrice;
-    private String type;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private CarType type;
 
-    public Car(long barcode, String licensePlateNumber, int passengerCapacity, String brand, String model,
-               double mileage, String transmissionType, double dailyPrice, String type, String status) {
+    @Enumerated(EnumType.STRING)
+    private CarStatus status;
+
+    public Car(String barcode, String licensePlateNumber, int passengerCapacity, String brand, String model,
+               double mileage, String transmissionType, double dailyPrice, CarType type) {
         this.barcode = barcode;
         this.licensePlateNumber = licensePlateNumber;
         this.passengerCapacity = passengerCapacity;
@@ -31,15 +30,34 @@ public class Car {
         this.mileage = mileage;
         this.transmissionType = transmissionType;
         this.dailyPrice = dailyPrice;
+        this.status = CarStatus.AVAILABLE;
         this.type = type;
-        this.status = status;
+    }
+    public Car(){
+
+    }
+    public enum CarType {
+        ECONOMY,
+        PEOPLE_CARRIER,
+        ESTATE,
+        SUV,
+        STANDARD,
+        CONVERTIBLE,
+        LUXURY
+    }
+    public enum CarStatus {
+        AVAILABLE,
+        RESERVED,
+        LOANED,
+        LOST,
+        BEING_SERVICED
     }
 
-    public long getBarcode() {
+    public String getBarcode() {
         return barcode;
     }
 
-    public void setBarcode(long barcode) {
+    public void setBarcode(String barcode) {
         this.barcode = barcode;
     }
 
@@ -99,19 +117,19 @@ public class Car {
         this.dailyPrice = dailyPrice;
     }
 
-    public String getType() {
+    public CarType getCarType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setCarType(CarType type) {
         this.type = type;
     }
 
-    public String getStatus() {
+    public CarStatus getCarStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setCarStatus(CarStatus status) {
         this.status = status;
     }
 }

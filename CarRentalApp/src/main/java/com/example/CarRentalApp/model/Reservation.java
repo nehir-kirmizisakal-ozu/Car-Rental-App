@@ -1,28 +1,39 @@
 package com.example.CarRentalApp.model;
 
 import jakarta.persistence.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Reservation {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String reservationNumber;
-    private LocalDateTime creationDate;
-    private LocalDateTime pickUpDateTime;
-    private LocalDateTime dropOffDateTime;
-    private String pickUpLocation;
-    private String dropOffLocation;
-    private LocalDateTime returnDateTime;
+    private Date creationDate;
+    private Date pickUpDateTime;
+    private Date dropOffDateTime;
+    @OneToOne
+    private Location pickUpLocation;
+    @OneToOne
+    private Location dropOffLocation;
+    private Date returnDateTime;
     @ManyToOne
     private Member member;
+    private ReservationStatus status;
 
-    public Reservation(String reservationNumber, LocalDateTime creationDate, LocalDateTime pickUpDateTime,
-                       LocalDateTime dropOffDateTime, String pickUpLocation, String dropOffLocation,
-                       LocalDateTime returnDateTime, Member member) {
+    @OneToMany
+    private List<CustomerService> customerServices;
 
+    @OneToMany
+    private List<Equipment> equipments;
+    @OneToOne
+    private Car car;
+
+    public Reservation(String reservationNumber, Date creationDate, Date pickUpDateTime, Date dropOffDateTime, Location pickUpLocation,
+                       Location dropOffLocation, Date returnDateTime, Member member, Car car) {
         this.reservationNumber = reservationNumber;
         this.creationDate = creationDate;
         this.pickUpDateTime = pickUpDateTime;
@@ -31,8 +42,20 @@ public class Reservation {
         this.dropOffLocation = dropOffLocation;
         this.returnDateTime = returnDateTime;
         this.member = member;
+        this.car = car;
+        this.status = ReservationStatus.PENDING;
     }
+    public Reservation(){
 
+    }
+    public enum ReservationStatus {
+        ACTIVE,
+        PENDING,
+        CONFIRMED,
+        COMPLETED,
+        CANCELLED,
+        NONE
+    }
     public String getReservationNumber() {
         return reservationNumber;
     }
@@ -41,51 +64,51 @@ public class Reservation {
         this.reservationNumber = reservationNumber;
     }
 
-    public LocalDateTime getCreationDate() {
+    public Date getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getPickUpDateTime() {
+    public Date getPickUpDateTime() {
         return pickUpDateTime;
     }
 
-    public void setPickUpDateTime(LocalDateTime pickUpDateTime) {
+    public void setPickUpDateTime(Date pickUpDateTime) {
         this.pickUpDateTime = pickUpDateTime;
     }
 
-    public LocalDateTime getDropOffDateTime() {
+    public Date getDropOffDateTime() {
         return dropOffDateTime;
     }
 
-    public void setDropOffDateTime(LocalDateTime dropOffDateTime) {
+    public void setDropOffDateTime(Date dropOffDateTime) {
         this.dropOffDateTime = dropOffDateTime;
     }
 
-    public String getPickUpLocation() {
+    public Location getPickUpLocation() {
         return pickUpLocation;
     }
 
-    public void setPickUpLocation(String pickUpLocation) {
+    public void setPickUpLocation(Location pickUpLocation) {
         this.pickUpLocation = pickUpLocation;
     }
 
-    public String getDropOffLocation() {
+    public Location getDropOffLocation() {
         return dropOffLocation;
     }
 
-    public void setDropOffLocation(String dropOffLocation) {
+    public void setDropOffLocation(Location dropOffLocation) {
         this.dropOffLocation = dropOffLocation;
     }
 
-    public LocalDateTime getReturnDateTime() {
+    public Date getReturnDateTime() {
         return returnDateTime;
     }
 
-    public void setReturnDateTime(LocalDateTime returnDateTime) {
+    public void setReturnDateTime(Date returnDateTime) {
         this.returnDateTime = returnDateTime;
     }
 

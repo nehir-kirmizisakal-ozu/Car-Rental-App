@@ -1,25 +1,22 @@
 package com.example.CarRentalApp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
-public class Service {
+public class CustomerService {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
     private String name;
     private double price;
 
-    public Service() {}
+    public CustomerService() {}
 
-    public Service(String name, double price) {
+    public CustomerService(String name, double price) {
         this.name = name;
         this.price = price;
     }
-
-
 
     public String getName() {
         return name;

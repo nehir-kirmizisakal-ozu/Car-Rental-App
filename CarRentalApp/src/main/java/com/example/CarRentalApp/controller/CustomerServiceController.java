@@ -1,4 +1,4 @@
 package com.example.CarRentalApp.controller;
 
-public class ServiceController {
+public class CustomerServiceController {
 }

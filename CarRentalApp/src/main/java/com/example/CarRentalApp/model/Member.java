@@ -1,5 +1,6 @@
 package com.example.CarRentalApp.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -7,25 +8,27 @@ import java.util.List;
 @Entity
 public class Member {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
     private String name;
     private String address;
     private String email;
     private long phone;
+    private String drivingLicenseNumber;
 
-    @OneToMany (mappedBy = "member")
+    @JsonIgnore
+    @OneToMany(mappedBy = "member")
     private List<Reservation> reservations;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long drivingLicenseNumber;
-
-    public Member(String name, String address, String email, long phone, long drivingLicenseNumber) {
+    public Member(String name, String address, String email, long phone, String drivingLicenseNumber) {
         this.name = name;
         this.address = address;
         this.email = email;
         this.phone = phone;
         this.drivingLicenseNumber = drivingLicenseNumber;
     }
+    public Member(){}
 
     public String getName() {
         return name;
@@ -59,11 +62,11 @@ public class Member {
         this.phone = phone;
     }
 
-    public long getDrivingLicenseNumber() {
+    public String  getDrivingLicenseNumber() {
         return drivingLicenseNumber;
     }
 
-    public void setDrivingLicenseNumber(long drivingLicenseNumber) {
+    public void setDrivingLicenseNumber(String drivingLicenseNumber) {
         this.drivingLicenseNumber = drivingLicenseNumber;
     }
 

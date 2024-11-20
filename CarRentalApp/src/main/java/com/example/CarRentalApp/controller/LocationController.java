@@ -16,7 +16,7 @@ public class LocationController {
 
     @GetMapping
     public List<Location> getAllLocations() {
-        return locationService.getAllLocations();
+        return null;//locationService.getAllLocations();
     }
 
     @PostMapping
@@ -25,7 +25,7 @@ public class LocationController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteLocation(@PathVariable Long id) {
+    public void deleteLocation(@PathVariable int id) {
         locationService.deleteLocation(id);
     }
 }
