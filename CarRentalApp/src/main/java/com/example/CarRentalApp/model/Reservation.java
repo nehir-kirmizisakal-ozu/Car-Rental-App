@@ -48,6 +48,39 @@ public class Reservation {
     public Reservation(){
 
     }
+
+    public ReservationStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ReservationStatus status) {
+        this.status = status;
+    }
+
+    public List<CustomerService> getCustomerServices() {
+        return customerServices;
+    }
+
+    public void setCustomerServices(List<CustomerService> customerServices) {
+        this.customerServices = customerServices;
+    }
+
+    public List<Equipment> getEquipments() {
+        return equipments;
+    }
+
+    public void setEquipments(List<Equipment> equipments) {
+        this.equipments = equipments;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
+    }
+
     public enum ReservationStatus {
         ACTIVE,
         PENDING,

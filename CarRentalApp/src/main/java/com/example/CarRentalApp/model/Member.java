@@ -14,14 +14,14 @@ public class Member {
     private String name;
     private String address;
     private String email;
-    private long phone;
+    private String phone;
     private String drivingLicenseNumber;
 
     @JsonIgnore
     @OneToMany(mappedBy = "member")
     private List<Reservation> reservations;
 
-    public Member(String name, String address, String email, long phone, String drivingLicenseNumber) {
+    public Member(String name, String address, String email, String phone, String drivingLicenseNumber) {
         this.name = name;
         this.address = address;
         this.email = email;
@@ -54,11 +54,11 @@ public class Member {
         this.email = email;
     }
 
-    public long getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(long phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
