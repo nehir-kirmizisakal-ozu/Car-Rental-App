@@ -1,24 +1,22 @@
 package com.example.CarRentalApp.dto;
 
 public class CustomerServiceDTO {
-    private String serviceName;
+    private int code;
     private double price;
-    private String reservationNumber;
 
     public CustomerServiceDTO() {}
 
-    public CustomerServiceDTO(String serviceName, double price, String reservationNumber) {
-        this.serviceName = serviceName;
+    public CustomerServiceDTO(int code, double price) {
+        this.code = code;
         this.price = price;
-        this.reservationNumber = reservationNumber;
     }
 
-    public String getServiceName() {
-        return serviceName;
+    public int getCode() {
+        return code;
     }
 
-    public void setServiceName(String serviceName) {
-        this.serviceName = serviceName;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public double getPrice() {
@@ -29,11 +27,4 @@ public class CustomerServiceDTO {
         this.price = price;
     }
 
-    public String getReservationNumber() {
-        return reservationNumber;
-    }
-
-    public void setReservationNumber(String reservationNumber) {
-        this.reservationNumber = reservationNumber;
-    }
 }

@@ -1,28 +1,18 @@
 package com.example.CarRentalApp.dto;
 
 public class EquipmentDTO {
-    private String equipmentId;
-    private String reservationNumber;
-
+    private int code;
 
     public EquipmentDTO(){}
-    public EquipmentDTO(String equipmentId, String reservationNumber) {
-        this.equipmentId = equipmentId;
-        this.reservationNumber = reservationNumber;
+    public EquipmentDTO(int code) {
+        this.code = code;
     }
-    public String getEquipmentId() {
-        return equipmentId;
-    }
-
-    public void setEquipmentId(String equipmentId) {
-        this.equipmentId = equipmentId;
+    public int getCode() {
+        return code;
     }
 
-    public String getReservationNumber() {
-        return reservationNumber;
+    public void setCode(int code) {
+        this.code = code;
     }
 
-    public void setReservationNumber(String reservationNumber) {
-        this.reservationNumber = reservationNumber;
-    }
 }

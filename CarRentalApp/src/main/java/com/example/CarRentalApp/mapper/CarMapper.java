@@ -1,4 +1,16 @@
 package com.example.CarRentalApp.mapper;
 
-public class CarMapper {
-}
+import com.example.CarRentalApp.dto.CarDTO;
+import com.example.CarRentalApp.model.Car;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+    @Mapper(componentModel = "spring")
+    public interface CarMapper {
+
+        CarDTO carToCarDTO(Car car);
+
+        Car carDTOToCar(CarDTO carDTO);
+
+    }
+

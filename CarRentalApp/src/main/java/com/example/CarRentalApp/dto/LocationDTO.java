@@ -2,23 +2,23 @@ package com.example.CarRentalApp.dto;
 
 public class LocationDTO {
 
-    private Long code;
+    private int code;
     private String name;
     private String address;
     public LocationDTO() {}
 
-    public LocationDTO(Long code, String name, String address) {
+    public LocationDTO(int code, String name, String address) {
         this.code = code;
         this.name = name;
         this.address = address;
     }
 
     // Getters and Setters
-    public Long getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(Long code) {
+    public void setCode(int code) {
         this.code = code;
     }
 

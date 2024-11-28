@@ -1,4 +1,14 @@
 package com.example.CarRentalApp.mapper;
 
-public class EquipmentMapper {
+import com.example.CarRentalApp.dto.EquipmentDTO;
+import com.example.CarRentalApp.model.Equipment;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+@Mapper(componentModel = "spring")
+public interface EquipmentMapper {
+
+    EquipmentDTO equipmentToDTO(Equipment equipment);
+
+    Equipment equipmentDTOToEntity(EquipmentDTO equipmentDTO);
 }

@@ -19,10 +19,10 @@ public class LocationController {
         return null;//locationService.getAllLocations();
     }
 
-    @PostMapping
-    public Location saveLocation(@RequestBody Location location) {
-        return locationService.saveLocation(location);
-    }
+//    @PostMapping
+//    public Location saveLocation(@RequestBody Location location) {
+//        return locationService.saveLocation(location);
+//    }
 
     @DeleteMapping("/{id}")
     public void deleteLocation(@PathVariable int id) {

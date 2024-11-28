@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EquipmentRepo extends JpaRepository<Equipment, Integer> {
 
-
+    public Equipment findByCode(int code);
 }

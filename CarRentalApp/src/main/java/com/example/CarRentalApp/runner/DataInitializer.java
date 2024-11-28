@@ -52,8 +52,8 @@ public class DataInitializer implements CommandLineRunner {
 
         // Initialize Locations
         if (locationRepository.count() == 0) {
-            Location loc1 = new Location(1L, "Istanbul Airport", "Istanbul Airport Address");
-            Location loc2 = new Location(1L, "Istanbul Sabiha Gokcen Airport", "Sabiha Gokcen Address");
+            Location loc1 = new Location(1, "Istanbul Airport", "Istanbul Airport Address");
+            Location loc2 = new Location(2, "Istanbul Sabiha Gokcen Airport", "Sabiha Gokcen Address");
 
             locationRepository.save(loc1);
             locationRepository.save(loc2);
@@ -83,8 +83,8 @@ public class DataInitializer implements CommandLineRunner {
             dropOffCalendar.set(2024, Calendar.DECEMBER, 5, 10, 0); // December is 11 (0-based)
             Date dropOffDate = dropOffCalendar.getTime();
 
-            reservation.setPickUpDateTime(pickUpDate); // December 1, 2024
-            reservation.setDropOffDateTime(dropOffDate); // December 5, 2024
+            reservation.setPickUpDateTime(pickUpDate);
+            reservation.setDropOffDateTime(dropOffDate);
             reservation.setPickUpLocation(pickUpLocation);
             reservation.setDropOffLocation(dropOffLocation);
             reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);

@@ -11,23 +11,23 @@ public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-    private Long code;
+    private int code;
     private String name;
     private String address;
 
     public Location() {}
 
-    public Location(Long code, String name, String address) {
+    public Location(int code, String name, String address) {
         this.code = code;
         this.name = name;
         this.address = address;
     }
 
-    public Long getCode() {
+    public int getCode() {
         return code;
     }
 
-    public void setCode(Long code) {
+    public void setCode( int code) {
         this.code = code;
     }
 

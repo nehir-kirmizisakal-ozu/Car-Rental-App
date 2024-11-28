@@ -1,21 +1,29 @@
 package com.example.CarRentalApp.dto;
 
+import com.example.CarRentalApp.model.Car;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 public class CarDTO {
     private String barcode;
     private String brand;
     private String model;
-    private String carType;
+
+    @Enumerated(EnumType.STRING)
+    private Car.CarType type;
     private double mileage;
     private String transmissionType;
     private double dailyPrice;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Car.CarStatus status;
+
 
     public CarDTO(){}
-    public CarDTO(String barcode, String brand, String model, String carType, double mileage, String transmissionType, double dailyPrice, String status) {
+    public CarDTO(String barcode, String brand, String model, Car.CarType type, double mileage, String transmissionType, double dailyPrice,  Car.CarStatus status) {
         this.barcode = barcode;
         this.brand = brand;
         this.model = model;
-        this.carType = carType;
+        this.type = type;
         this.mileage = mileage;
         this.transmissionType = transmissionType;
         this.dailyPrice = dailyPrice;
@@ -46,12 +54,12 @@ public class CarDTO {
         this.model = model;
     }
 
-    public String getCarType() {
-        return carType;
+    public Car.CarType getCarType() {
+        return type;
     }
 
-    public void setCarType(String carType) {
-        this.carType = carType;
+    public void setCarType(Car.CarType type) {
+        this.type = type;
     }
 
     public double getMileage() {
@@ -78,11 +86,11 @@ public class CarDTO {
         this.dailyPrice = dailyPrice;
     }
 
-    public String getStatus() {
+    public Car.CarStatus getCarStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setCarStatus(Car.CarStatus status) {
         this.status = status;
     }
 }
