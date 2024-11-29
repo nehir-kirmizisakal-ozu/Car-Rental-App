@@ -1,7 +1,6 @@
 package com.example.CarRentalApp.repository;
 
 import com.example.CarRentalApp.model.CustomerService;
-import com.example.CarRentalApp.model.Equipment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,6 @@
 package com.example.CarRentalApp.dto;
 
 import java.util.Date;
-import java.util.List;
 
 public class ReservationDTO {
 
@@ -10,6 +9,8 @@ public class ReservationDTO {
     private Date dropOffDateTime;
     private LocationDTO pickUpLocation;
     private LocationDTO dropOffLocation;
+
+    private double totalAmount;
 
 
     public ReservationDTO() {
@@ -65,4 +66,13 @@ public class ReservationDTO {
         this.dropOffLocation = dropOffLocation;
 
     }
+
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
 }

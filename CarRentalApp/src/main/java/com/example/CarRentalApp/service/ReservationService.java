@@ -4,7 +4,6 @@ import com.example.CarRentalApp.dto.ReservationDTO;
 import com.example.CarRentalApp.mapper.ReservationMapper;
 import com.example.CarRentalApp.model.*;
 import com.example.CarRentalApp.repository.*;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -182,6 +181,7 @@ public class ReservationService {
         carRepo.save(car);
 
         ReservationDTO reservationDTO = reservationMapper.reservationToDTO(reservation);
+        reservationDTO.setTotalAmount(totalAmount);
 
         return reservationDTO;
     }
