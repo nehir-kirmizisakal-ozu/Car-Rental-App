@@ -3,7 +3,6 @@ package com.example.CarRentalApp.mapper;
 import com.example.CarRentalApp.dto.EquipmentDTO;
 import com.example.CarRentalApp.model.Equipment;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface EquipmentMapper {
