@@ -9,7 +9,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import static com.example.CarRentalApp.model.Car.CarStatus.AVAILABLE;
+import java.util.stream.Collectors;
+
+import static com.example.CarRentalApp.model.Car.CarStatus.*;
 
 @Service
 public class CarService {
@@ -51,4 +53,26 @@ public class CarService {
     public void deleteCar(String id) {
         carRepo.deleteById(id);
     }
+
+    public List<CarDTO> getAllRentedCars() {
+        List<CarDTO> combinedList = new ArrayList<>();
+
+        List<Car> loanedCars = carRepo.findByStatus(LOANED);
+        for (Car car : loanedCars) {
+            CarDTO dto = carMapper.carToCarDTO(car);
+            combinedList.add(dto);
+        }
+
+        List<Car> reservedCars = carRepo.findByStatus(RESERVED);
+        for (Car car : reservedCars) {
+            CarDTO dto = carMapper.carToCarDTO(car);
+            combinedList.add(dto);
+        }
+
+        return combinedList;
+    }
+
+
+
+
 }

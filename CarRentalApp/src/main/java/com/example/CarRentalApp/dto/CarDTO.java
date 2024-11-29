@@ -17,7 +17,6 @@ public class CarDTO {
     @Enumerated(EnumType.STRING)
     private Car.CarStatus status;
 
-
     public CarDTO(){}
     public CarDTO(String barcode, String brand, String model, Car.CarType type, double mileage, String transmissionType, double dailyPrice,  Car.CarStatus status) {
         this.barcode = barcode;

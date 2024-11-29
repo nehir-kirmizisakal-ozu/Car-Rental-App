@@ -1,5 +1,6 @@
 package com.example.CarRentalApp.repository;
 
+import com.example.CarRentalApp.model.Equipment;
 import com.example.CarRentalApp.model.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -7,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReservationRepo extends JpaRepository<Reservation, String> {
 
-
+    public Reservation findByReservationNumber(String reservationNumber);
 }
