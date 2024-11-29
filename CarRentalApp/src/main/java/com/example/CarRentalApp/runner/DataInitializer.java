@@ -30,8 +30,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Initialize Members
         if (memberRepository.count() == 0) {
-            Member member1 = new Member("Alice", "123 Main St", "alice@example.com", "1234567890", "DL123456");
-            Member member2 = new Member("Bob", "456 Elm St", "bob@example.com", "9876543210", "DL654321");
+            Member member1 = new Member("Viktor", "123 Universe St", "jesus@example.com", "1234567890", "DL123456");
+            Member member2 = new Member("Vi", "456 Prison St", "cupcake@example.com", "9876543210", "DL654321");
 
             memberRepository.save(member1);
             memberRepository.save(member2);

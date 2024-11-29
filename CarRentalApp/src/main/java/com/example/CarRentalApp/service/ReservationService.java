@@ -2,21 +2,13 @@ package com.example.CarRentalApp.service;
 
 import com.example.CarRentalApp.dto.ReservationDTO;
 import com.example.CarRentalApp.mapper.ReservationMapper;
-import com.example.CarRentalApp.model.Car;
-import com.example.CarRentalApp.model.CustomerService;
-import com.example.CarRentalApp.model.Equipment;
-import com.example.CarRentalApp.model.Reservation;
-import com.example.CarRentalApp.repository.CarRepo;
-import com.example.CarRentalApp.repository.CustomerServiceRepo;
-import com.example.CarRentalApp.repository.EquipmentRepo;
-import com.example.CarRentalApp.repository.ReservationRepo;
+import com.example.CarRentalApp.model.*;
+import com.example.CarRentalApp.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class ReservationService {
@@ -32,6 +24,12 @@ public class ReservationService {
 
     @Autowired
     private CarRepo carRepo;
+
+    @Autowired
+    private MemberRepo memberRepo;
+
+    @Autowired
+    private LocationRepo locationRepo;
 
     @Autowired
     private ReservationMapper reservationMapper;
@@ -113,6 +111,79 @@ public class ReservationService {
         reservationRepo.save(reservation);
         return true;
     }
+    public boolean deleteReservation(String reservationNumber) {
+        Reservation reservation = reservationRepo.findByReservationNumber(reservationNumber);
 
+        if (reservation == null) {
+            return false;
+        }
+        Car car = reservation.getCar();
+        if (car != null) {
+            car.setCarStatus(Car.CarStatus.AVAILABLE);
+            carRepo.save(car);
+        }
+        Member member = reservation.getMember();
+        if (member != null) {
+            member.getReservations().remove(reservation);
+            memberRepo.save(member);
+        }
+        reservationRepo.delete(reservation);
+        return true;
+    }
+
+    public ReservationDTO makeReservation(String carBarcode, int dayCount, int memberId, int pickUpLocationCode,
+                                          int dropOffLocationCode, List<Integer> additionalEquipmentCodes,
+                                          List<Integer> additionalServiceCodes) {
+
+        Car car = carRepo.findByBarcode(carBarcode);
+
+        if (car == null || !car.getCarStatus().equals(Car.CarStatus.AVAILABLE)) {
+            throw new IllegalStateException("Car is not available for reservation.");
+        }
+
+        Member member = memberRepo.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Location pickUpLocation = locationRepo.findByCode(pickUpLocationCode);
+        Location dropOffLocation = locationRepo.findByCode(dropOffLocationCode);
+
+        List<Equipment> additionalEquipments = equipmentRepo.findAllByCode(additionalEquipmentCodes);
+        List<CustomerService> additionalServices = customerServiceRepo.findAllByCode(additionalServiceCodes);
+
+        String reservationNumber = UUID.randomUUID().toString().substring(0, 8);
+
+        Date creationDate = new Date();
+        Date pickUpDateTime = new Date(System.currentTimeMillis() + 86400000);
+        Date dropOffDateTime = new Date(pickUpDateTime.getTime() + (dayCount * 86400000L));
+
+        double totalAmount = (dayCount * car.getDailyPrice());
+        for (CustomerService service : additionalServices) {
+            totalAmount += service.getPrice();
+        }
+        for (Equipment equipment : additionalEquipments) {
+            totalAmount += equipment.getPrice();
+        }
+
+        Reservation reservation = new Reservation();
+        reservation.setReservationNumber(reservationNumber);
+        reservation.setCreationDate(creationDate);
+        reservation.setPickUpDateTime(pickUpDateTime);
+        reservation.setDropOffDateTime(dropOffDateTime);
+        reservation.setPickUpLocation(pickUpLocation);
+        reservation.setDropOffLocation(dropOffLocation);
+        reservation.setMember(member);
+        reservation.setStatus(Reservation.ReservationStatus.ACTIVE);
+        reservation.setCustomerServices(additionalServices);
+        reservation.setEquipments(additionalEquipments);
+        reservation.setCar(car);
+
+        reservationRepo.save(reservation);
+
+        car.setCarStatus(Car.CarStatus.LOANED);
+        carRepo.save(car);
+
+        ReservationDTO reservationDTO = reservationMapper.reservationToDTO(reservation);
+
+        return reservationDTO;
+    }
 
 }

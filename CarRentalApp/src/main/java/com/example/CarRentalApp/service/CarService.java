@@ -1,14 +1,19 @@
 package com.example.CarRentalApp.service;
 
 import com.example.CarRentalApp.dto.CarDTO;
+import com.example.CarRentalApp.dto.RentedCarDTO;
 import com.example.CarRentalApp.mapper.CarMapper;
 import com.example.CarRentalApp.model.Car;
+import com.example.CarRentalApp.model.Member;
+import com.example.CarRentalApp.model.Reservation;
 import com.example.CarRentalApp.repository.CarRepo;
+import com.example.CarRentalApp.repository.ReservationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.CarRentalApp.model.Car.CarStatus.*;
@@ -18,6 +23,9 @@ public class CarService {
 
     @Autowired
     private CarRepo carRepo;
+
+    @Autowired
+    private ReservationRepo reservationRepo;
 
     @Autowired
     private CarMapper carMapper;
@@ -41,38 +49,71 @@ public class CarService {
         return dtoList;
     }
 
-    public List<CarDTO> getAvailableCars() {
+    public List<CarDTO> searchAvailableCars(Car.CarType carType, String transmissionType) {
         List<Car> cars = carRepo.findByStatus(AVAILABLE);
         List<CarDTO> dtoList = new ArrayList<>();
         for (Car car : cars) {
-            dtoList.add(carMapper.carToCarDTO(car));
+            if(carType == car.getCarType() && transmissionType.equals(car.getTransmissionType())){
+                dtoList.add(carMapper.carToCarDTO(car));
+            }
         }
         return dtoList;
     }
 
-    public void deleteCar(String id) {
-        carRepo.deleteById(id);
+    public boolean deleteCar(String barcode) {
+        Car car = carRepo.findByBarcode(barcode);
+        if (car == null) {
+            return false;
+        }
+        if (!car.getCarStatus().equals(Car.CarStatus.AVAILABLE)) {
+            return false;
+        }
+        List<Reservation> reservations = reservationRepo.findByCar(car);
+        if (reservations != null && !reservations.isEmpty()) {
+            return false;
+        }
+        carRepo.delete(car);
+        return true;
     }
 
-    public List<CarDTO> getAllRentedCars() {
-        List<CarDTO> combinedList = new ArrayList<>();
+    public List<RentedCarDTO> getAllRentedCars() {
 
-        List<Car> loanedCars = carRepo.findByStatus(LOANED);
-        for (Car car : loanedCars) {
-            CarDTO dto = carMapper.carToCarDTO(car);
-            combinedList.add(dto);
+        // Query for all rented or reserved cars
+        List<Reservation> reservations = reservationRepo.findByStatusIn(List.of(Car.CarStatus.LOANED, Car.CarStatus.RESERVED));
+
+        if (reservations.isEmpty()) {
+            throw new IllegalStateException("No rented or reserved cars found.");
         }
 
-        List<Car> reservedCars = carRepo.findByStatus(RESERVED);
-        for (Car car : reservedCars) {
-            CarDTO dto = carMapper.carToCarDTO(car);
-            combinedList.add(dto);
+        // Create result list
+        List<RentedCarDTO> rentedCarDTOs = new ArrayList<>();
+
+        for (Reservation reservation : reservations) {
+            Car car = reservation.getCar();
+            Member member = reservation.getMember();
+
+            // Create DTO for each reservation
+            RentedCarDTO dto = new RentedCarDTO(
+                    car.getBrand(),
+                    car.getModel(),
+                    car.getCarType(),
+                    car.getTransmissionType(),
+                    car.getBarcode(),
+                    reservation.getReservationNumber(),
+                    member.getName(),
+                    reservation.getDropOffDateTime(),
+                    reservation.getDropOffLocation().getName(),
+                    calculateReservationDays(reservation)
+            );
+
+            rentedCarDTOs.add(dto);
         }
 
-        return combinedList;
+        return rentedCarDTOs;
     }
-
-
-
+    private long calculateReservationDays(Reservation reservation) {
+        long differenceInMillis = reservation.getDropOffDateTime().getTime() - reservation.getPickUpDateTime().getTime();
+        return differenceInMillis / (1000 * 60 * 60 * 24);
+    }
 
 }

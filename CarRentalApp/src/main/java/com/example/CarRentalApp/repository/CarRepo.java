@@ -9,7 +9,8 @@ import java.util.List;
 @Repository
 public interface CarRepo extends JpaRepository<Car, String> {
     List<Car> findByStatus(Car.CarStatus status);
-    List<Car> findByStatusIn(List<Car.CarStatus> statuses);
+
+    Car findByBarcode(String barcode);
 
 }
 

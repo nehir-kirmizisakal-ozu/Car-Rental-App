@@ -153,6 +153,15 @@ public class Reservation {
         this.member = member;
     }
 
+
+    public int getReservationDayCount() {
+        if (pickUpDateTime == null || dropOffDateTime == null) {
+            return 0;
+        }
+        long diffMillis = dropOffDateTime.getTime() - pickUpDateTime.getTime();
+        return (int) (diffMillis / (1000 * 60 * 60 * 24));  // Convert milliseconds to days
+    }
+
     @Override
     public String toString() {
         return "Reservation{" +
