@@ -146,8 +146,8 @@ public class ReservationService {
         Location pickUpLocation = locationRepo.findByCode(pickUpLocationCode);
         Location dropOffLocation = locationRepo.findByCode(dropOffLocationCode);
 
-        List<Equipment> additionalEquipments = equipmentRepo.findAllByCode(additionalEquipmentCodes);
-        List<CustomerService> additionalServices = customerServiceRepo.findAllByCode(additionalServiceCodes);
+        List<Equipment> additionalEquipments = equipmentRepo.findAllByCodeIn(additionalEquipmentCodes);
+        List<CustomerService> additionalServices = customerServiceRepo.findAllByCodeIn(additionalServiceCodes);
 
         String reservationNumber = UUID.randomUUID().toString().substring(0, 8);
 

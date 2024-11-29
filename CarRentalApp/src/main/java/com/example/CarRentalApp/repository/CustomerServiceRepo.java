@@ -10,5 +10,5 @@ import java.util.List;
 @Repository
 public interface CustomerServiceRepo extends JpaRepository<CustomerService, Integer> {
     public CustomerService findByCode(int code);
-    public List<CustomerService> findAllByCode(List<Integer> codes);
+    public List<CustomerService> findAllByCodeIn(List<Integer> codes);
 }

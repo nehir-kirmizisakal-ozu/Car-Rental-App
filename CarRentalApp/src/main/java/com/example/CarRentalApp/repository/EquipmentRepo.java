@@ -10,5 +10,5 @@ import java.util.List;
 public interface EquipmentRepo extends JpaRepository<Equipment, Integer> {
 
     public Equipment findByCode(int code);
-    public List<Equipment> findAllByCode(List<Integer> codes);
+    public List<Equipment> findAllByCodeIn(List<Integer> codes);
 }
