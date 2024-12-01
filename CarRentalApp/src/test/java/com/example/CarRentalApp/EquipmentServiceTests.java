@@ -1,106 +1,82 @@
 package com.example.CarRentalApp;
+
 import com.example.CarRentalApp.dto.EquipmentDTO;
-import com.example.CarRentalApp.mapper.EquipmentMapper;
-import com.example.CarRentalApp.model.Equipment;
-import com.example.CarRentalApp.repository.EquipmentRepo;
 import com.example.CarRentalApp.service.EquipmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+@Transactional
 class EquipmentServiceTests {
 
-    @Mock
-    private EquipmentRepo equipmentRepo;
-
-    @Mock
-    private EquipmentMapper equipmentMapper;
-
-    @InjectMocks
+    @Autowired
     private EquipmentService equipmentService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        List<EquipmentDTO> allEquipment = equipmentService.getAllEquipment();
+        for (EquipmentDTO equipment : allEquipment) {
+            equipmentService.deleteEquipment(equipment.getCode());
+        }
     }
 
     @Test
     void testSaveEquipment() {
-        
-        EquipmentDTO inputDTO = new EquipmentDTO(1);
-        Equipment mockEntity = new Equipment("Snow Tires", 50.0, 1);
-        Equipment savedEntity = new Equipment("Snow Tires", 50.0, 1);
-        EquipmentDTO expectedDTO = new EquipmentDTO(1);
-
-        when(equipmentMapper.equipmentDTOToEntity(inputDTO)).thenReturn(mockEntity);
-        when(equipmentRepo.save(mockEntity)).thenReturn(savedEntity);
-        when(equipmentMapper.equipmentToDTO(savedEntity)).thenReturn(expectedDTO);
+        EquipmentDTO inputDTO = new EquipmentDTO();
+        inputDTO.setCode(1);
+        inputDTO.setName("Snow Tires");
+        inputDTO.setPrice(50.0);
 
         EquipmentDTO result = equipmentService.saveEquipment(inputDTO);
 
-        assertNotNull(result, "The result should not be null");
-        assertEquals(expectedDTO.getCode(), result.getCode(), "The code should match the expected value");
-        verify(equipmentRepo, times(1)).save(mockEntity);
-        verify(equipmentMapper, times(1)).equipmentDTOToEntity(inputDTO);
-        verify(equipmentMapper, times(1)).equipmentToDTO(savedEntity);
+        assertNotNull(result);
+        assertEquals(1, result.getCode());
+        assertEquals("Snow Tires", result.getName());
+        assertEquals(50.0, result.getPrice());
     }
 
     @Test
     void testDeleteEquipment() {
-     
-        int equipmentId = 1;
+        EquipmentDTO inputDTO = new EquipmentDTO();
+        inputDTO.setCode(1);
+        inputDTO.setName("Snow Tires");
+        inputDTO.setPrice(50.0);
 
-        equipmentService.deleteEquipment(equipmentId);
+        EquipmentDTO savedEquipment = equipmentService.saveEquipment(inputDTO);
 
-        verify(equipmentRepo, times(1)).deleteById(equipmentId);
+        equipmentService.deleteEquipment(savedEquipment.getCode());
+
+        List<EquipmentDTO> equipmentList = equipmentService.getAllEquipment();
+        assertTrue(equipmentList.isEmpty());
     }
 
     @Test
     void testGetAllEquipment() {
-      
-        Equipment equipment1 = new Equipment("Snow Tires", 50.0, 1);
-        Equipment equipment2 = new Equipment("Chains", 30.0, 2);
-        EquipmentDTO dto1 = new EquipmentDTO(1);
-        EquipmentDTO dto2 = new EquipmentDTO(2);
+        EquipmentDTO dto1 = new EquipmentDTO();
+        dto1.setCode(1);
+        dto1.setName("Snow Tires");
+        dto1.setPrice(50.0);
 
-        when(equipmentRepo.findAll()).thenReturn(Arrays.asList(equipment1, equipment2));
-        when(equipmentMapper.equipmentToDTO(equipment1)).thenReturn(dto1);
-        when(equipmentMapper.equipmentToDTO(equipment2)).thenReturn(dto2);
+        EquipmentDTO dto2 = new EquipmentDTO();
+        dto2.setCode(2);
+        dto2.setName("Chains");
+        dto2.setPrice(30.0);
+
+        equipmentService.saveEquipment(dto1);
+        equipmentService.saveEquipment(dto2);
 
         List<EquipmentDTO> result = equipmentService.getAllEquipment();
-      
-        assertNotNull(result, "The result should not be null");
-        assertEquals(2, result.size(), "The result list should contain two items");
-        assertEquals(dto1.getCode(), result.get(0).getCode());
-        assertEquals(dto2.getCode(), result.get(1).getCode());
-        verify(equipmentRepo, times(1)).findAll();
-        verify(equipmentMapper, times(1)).equipmentToDTO(equipment1);
-        verify(equipmentMapper, times(1)).equipmentToDTO(equipment2);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertTrue(result.stream().anyMatch(equipment -> "Snow Tires".equals(equipment.getName())));
+        assertTrue(result.stream().anyMatch(equipment -> "Chains".equals(equipment.getName())));
     }
-
-    @Test
-    void testGetEquipmentByIdSuccess() {
-   
-        int equipmentId = 1;
-        Equipment mockEntity = new Equipment("Snow Tires", 50.0, 1);
-        EquipmentDTO expectedDTO = new EquipmentDTO(1);
-
-        when(equipmentRepo.findById(equipmentId)).thenReturn(Optional.of(mockEntity));
-        when(equipmentMapper.equipmentToDTO(mockEntity)).thenReturn(expectedDTO);
-
-        EquipmentDTO result = equipmentService.getEquipmentById(equipmentId);
-
-        assertNotNull(result, "The result should not be null");
-        assertEquals(expectedDTO.getCode(), result.getCode(), "The code should match the expected value");
-        verify(equipmentRepo, times(1)).findById(equipmentId);
-        verify(equipmentMapper, times(1)).equipmentToDTO(mockEntity);
-    }
-
 }

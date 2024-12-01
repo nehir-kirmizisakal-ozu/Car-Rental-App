@@ -1,121 +1,99 @@
 package com.example.CarRentalApp;
+
 import com.example.CarRentalApp.dto.CustomerServiceDTO;
-import com.example.CarRentalApp.mapper.CustomerServiceMapper;
 import com.example.CarRentalApp.model.CustomerService;
 import com.example.CarRentalApp.repository.CustomerServiceRepo;
 import com.example.CarRentalApp.service.CustomerServiceService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+@Transactional
 class CustomerServiceTests {
 
-    @Mock
-    private CustomerServiceRepo customerServiceRepo;
-
-    @Mock
-    private CustomerServiceMapper customerServiceMapper;
-
-    @InjectMocks
+    @Autowired
     private CustomerServiceService customerServiceService;
+
+    @Autowired
+    private CustomerServiceRepo customerServiceRepo;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        customerServiceRepo.deleteAll();
     }
 
     @Test
     void testSaveService() {
-        
-        CustomerServiceDTO inputDTO = new CustomerServiceDTO(1, 100.0);
-        CustomerService mockEntity = new CustomerService("Service1", 100.0, 1);
-        CustomerService savedEntity = new CustomerService("Service1", 100.0, 1);
-        CustomerServiceDTO expectedDTO = new CustomerServiceDTO(1, 100.0);
+        CustomerServiceDTO inputDTO = new CustomerServiceDTO();
+        inputDTO.setPrice(200.0);
 
-        when(customerServiceMapper.customerServiceDTOToEntity(inputDTO)).thenReturn(mockEntity);
-        when(customerServiceRepo.save(mockEntity)).thenReturn(savedEntity);
-        when(customerServiceMapper.customerServiceToDTO(savedEntity)).thenReturn(expectedDTO);
+        CustomerService serviceEntity = new CustomerService("Roadside Assistance", 200.0);
+        customerServiceRepo.save(serviceEntity);
 
         CustomerServiceDTO result = customerServiceService.saveService(inputDTO);
 
-        assertNotNull(result, "Result should not be null");
-        assertEquals(expectedDTO.getCode(), result.getCode(), "Service code should match");
-        verify(customerServiceRepo, times(1)).save(mockEntity);
-        verify(customerServiceMapper, times(1)).customerServiceDTOToEntity(inputDTO);
-        verify(customerServiceMapper, times(1)).customerServiceToDTO(savedEntity);
+        assertNotNull(result);
+        assertTrue(result.getCode() > 0);
+        assertEquals(200.0, result.getPrice());
+
+        CustomerService savedService = customerServiceRepo.findById(result.getCode()).orElse(null);
+        assertNotNull(savedService);
+        assertEquals("Roadside Assistance", savedService.getName());
+        assertEquals(200.0, savedService.getPrice());
     }
 
     @Test
     void testDeleteService() {
-       
-        int serviceId = 1;
+        CustomerService service = new CustomerService("Towing Service", 100.0);
+        CustomerService savedService = customerServiceRepo.save(service);
 
-        customerServiceService.deleteService(serviceId);
+        customerServiceService.deleteService(savedService.getCode());
 
-        verify(customerServiceRepo, times(1)).deleteById(serviceId);
+        assertFalse(customerServiceRepo.findById(savedService.getCode()).isPresent());
     }
 
     @Test
     void testGetAllServices() {
-       
-        CustomerService service1 = new CustomerService("Service1", 100.0, 1);
-        CustomerService service2 = new CustomerService("Service2", 150.0, 2);
-        CustomerServiceDTO dto1 = new CustomerServiceDTO(1, 100.0);
-        CustomerServiceDTO dto2 = new CustomerServiceDTO(2, 150.0);
+        CustomerService service1 = new CustomerService("Service1", 300.0);
+        CustomerService service2 = new CustomerService("Service2", 400.0);
+        customerServiceRepo.saveAll(List.of(service1, service2));
 
-        when(customerServiceRepo.findAll()).thenReturn(Arrays.asList(service1, service2));
-        when(customerServiceMapper.customerServiceToDTO(service1)).thenReturn(dto1);
-        when(customerServiceMapper.customerServiceToDTO(service2)).thenReturn(dto2);
+        List<CustomerServiceDTO> services = customerServiceService.getAllServices();
 
-        List<CustomerServiceDTO> result = customerServiceService.getAllServices();
-
-        assertNotNull(result, "Result should not be null");
-        assertEquals(2, result.size(), "Result list should contain 2 services");
-        verify(customerServiceRepo, times(1)).findAll();
-        verify(customerServiceMapper, times(1)).customerServiceToDTO(service1);
-        verify(customerServiceMapper, times(1)).customerServiceToDTO(service2);
+        assertNotNull(services);
+        assertEquals(2, services.size());
+        assertTrue(services.stream().anyMatch(s -> s.getPrice() == 300.0));
+        assertTrue(services.stream().anyMatch(s -> s.getPrice() == 400.0));
     }
 
     @Test
     void testGetServiceByIdSuccess() {
-     
-        int serviceId = 1;
-        CustomerService service = new CustomerService("Service1", 100.0, 1);
-        CustomerServiceDTO expectedDTO = new CustomerServiceDTO(1, 100.0);
+        CustomerService service = new CustomerService("GPS", 50.0);
+        CustomerService savedService = customerServiceRepo.save(service);
 
-        when(customerServiceRepo.findById(serviceId)).thenReturn(Optional.of(service));
-        when(customerServiceMapper.customerServiceToDTO(service)).thenReturn(expectedDTO);
+        CustomerServiceDTO result = customerServiceService.getServiceById(savedService.getCode());
 
-        CustomerServiceDTO result = customerServiceService.getServiceById(serviceId);
-
-        assertNotNull(result, "Result should not be null");
-        assertEquals(expectedDTO.getCode(), result.getCode(), "Service code should match");
-        verify(customerServiceRepo, times(1)).findById(serviceId);
-        verify(customerServiceMapper, times(1)).customerServiceToDTO(service);
+        assertNotNull(result);
+        assertEquals(savedService.getCode(), result.getCode());
+        assertEquals(50.0, result.getPrice());
     }
 
     @Test
     void testGetServiceByCode() {
-       
-        int serviceCode = 101;
-        CustomerService service = new CustomerService("Service1", 100.0, 101);
-        CustomerServiceDTO expectedDTO = new CustomerServiceDTO(101, 100.0);
+        CustomerService service = new CustomerService("Snow Tyres", 75.0);
+        CustomerService savedService = customerServiceRepo.save(service);
 
-        when(customerServiceRepo.findByCode(serviceCode)).thenReturn(service);
-        when(customerServiceMapper.customerServiceToDTO(service)).thenReturn(expectedDTO);
+        CustomerServiceDTO result = customerServiceService.getServiceByCode(savedService.getCode());
 
-        CustomerServiceDTO result = customerServiceService.getServiceByCode(serviceCode);
-
-        assertNotNull(result, "Result should not be null");
-        assertEquals(expectedDTO.getCode(), result.getCode(), "Service code should match");
-        verify(customerServiceRepo, times(1)).findByCode(serviceCode);
-        verify(customerServiceMapper, times(1)).customerServiceToDTO(service);
+        assertNotNull(result);
+        assertEquals(savedService.getCode(), result.getCode());
+        assertEquals(75.0, result.getPrice());
     }
 }
