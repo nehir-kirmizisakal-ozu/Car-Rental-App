@@ -12,7 +12,6 @@ public class ReservationDTO {
 
     private double totalAmount;
 
-
     public ReservationDTO() {
     }
 

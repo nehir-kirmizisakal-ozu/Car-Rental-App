@@ -14,6 +14,7 @@ public class Car {
     private double mileage;
     private String transmissionType;
     private double dailyPrice;
+    
     @Enumerated(EnumType.STRING)
     private CarType type;
 
