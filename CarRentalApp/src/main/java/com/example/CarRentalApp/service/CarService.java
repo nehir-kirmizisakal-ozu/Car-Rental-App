@@ -76,14 +76,12 @@ public class CarService {
 
     public List<RentedCarDTO> getAllRentedCars() {
 
-        // Query for all rented or reserved cars
         List<Reservation> reservations = reservationRepo.findByStatusIn(List.of(Car.CarStatus.LOANED, Car.CarStatus.RESERVED));
 
         if (reservations.isEmpty()) {
             throw new IllegalStateException("No rented or reserved cars found.");
         }
 
-        // Create result list
         List<RentedCarDTO> rentedCarDTOs = new ArrayList<>();
 
         for (Reservation reservation : reservations) {

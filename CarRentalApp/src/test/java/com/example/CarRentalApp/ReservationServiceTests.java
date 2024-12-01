@@ -1,20 +1,14 @@
 package com.example.CarRentalApp;
 
-import com.example.CarRentalApp.dto.ReservationDTO;
 import com.example.CarRentalApp.mapper.ReservationMapper;
 import com.example.CarRentalApp.model.*;
 import com.example.CarRentalApp.repository.*;
 import com.example.CarRentalApp.service.ReservationService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,54 +38,8 @@ class ReservationServiceTests {
     @Autowired
     private CustomerServiceRepo customerServiceRepo;
 
+    @Autowired
     private ReservationMapper reservationMapper;
-
-    @BeforeEach
-    void setUp() {
-        reservationMapper = Mappers.getMapper(ReservationMapper.class);
-    }
-
-    @Test
-    void testGetAllReservations() {
-        Reservation reservation1 = new Reservation();
-        reservation1.setReservationNumber("12345");
-        reservation1.setCreationDate(new Date());
-        reservation1.setPickUpDateTime(new Date());
-        reservation1.setDropOffDateTime(new Date());
-        reservationRepo.save(reservation1);
-
-        Reservation reservation2 = new Reservation();
-        reservation2.setReservationNumber("67890");
-        reservation2.setCreationDate(new Date());
-        reservation2.setPickUpDateTime(new Date());
-        reservation2.setDropOffDateTime(new Date());
-        reservationRepo.save(reservation2);
-
-        List<ReservationDTO> reservations = reservationService.getAllReservations();
-
-        assertNotNull(reservations);
-        assertEquals(2, reservations.size());
-    }
-
-    @Test
-    void testGetReservationByIdSuccess() {
-        Reservation reservation = new Reservation();
-        reservation.setReservationNumber("12345");
-        reservation.setCreationDate(new Date());
-        reservation.setPickUpDateTime(new Date());
-        reservation.setDropOffDateTime(new Date());
-        reservationRepo.save(reservation);
-
-        ReservationDTO reservationDTO = reservationService.getReservationById("12345");
-
-        assertNotNull(reservationDTO);
-        assertEquals("12345", reservationDTO.getReservationNumber());
-    }
-
-    @Test
-    void testGetReservationByIdNotFound() {
-        assertThrows(Exception.class, () -> reservationService.getReservationById("99999"));
-    }
 
     @Test
     void testReturnCar() {

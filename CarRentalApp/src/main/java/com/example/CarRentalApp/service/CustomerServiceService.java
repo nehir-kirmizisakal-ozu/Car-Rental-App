@@ -43,9 +43,5 @@ public class CustomerServiceService {
         CustomerService service = customerServiceRepo.findById(id).orElse(null);
         return customerServiceMapper.customerServiceToDTO(service);
     }
-    public CustomerServiceDTO getServiceByCode(int code) {
-        CustomerService service = customerServiceRepo.findByCode(code);
-        return customerServiceMapper.customerServiceToDTO(service);
-    }
 
 }
