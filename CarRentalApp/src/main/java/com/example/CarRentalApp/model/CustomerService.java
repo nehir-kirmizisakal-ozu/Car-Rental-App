@@ -6,27 +6,17 @@ import jakarta.persistence.*;
 public class CustomerService {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-
     private int code;
     private String name;
     private double price;
 
     public CustomerService() {}
 
-    public CustomerService(String name, double price, int code) {
+    public CustomerService(String name, double price) {
         this.name = name;
         this.price = price;
-        this.code = code;
     }
 
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
     public String getName() {
         return name;
     }

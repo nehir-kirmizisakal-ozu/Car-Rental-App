@@ -1,19 +1,15 @@
 package com.example.CarRentalApp.runner;
 
-import com.example.CarRentalApp.model.Car;
-import com.example.CarRentalApp.model.Location;
-import com.example.CarRentalApp.model.Member;
-import com.example.CarRentalApp.model.Reservation;
-import com.example.CarRentalApp.repository.CarRepo;
-import com.example.CarRentalApp.repository.LocationRepo;
-import com.example.CarRentalApp.repository.MemberRepo;
-import com.example.CarRentalApp.repository.ReservationRepo;
+import com.example.CarRentalApp.model.*;
+import com.example.CarRentalApp.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class DataInitializer implements CommandLineRunner {
@@ -25,6 +21,13 @@ public class DataInitializer implements CommandLineRunner {
     private ReservationRepo reservationRepository;
     @Autowired
     private LocationRepo locationRepository;
+
+    @Autowired
+    private EquipmentRepo equipmentRepository;
+
+    @Autowired
+    private CustomerServiceRepo customerServiceRepository;
+
 
     @Override
     public void run(String... args) throws Exception {
@@ -50,10 +53,9 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Cars initialized.");
         }
 
-        // Initialize Locations
         if (locationRepository.count() == 0) {
-            Location loc1 = new Location(1, "Istanbul Airport", "Istanbul Airport Address");
-            Location loc2 = new Location(2, "Istanbul Sabiha Gokcen Airport", "Sabiha Gokcen Address");
+            Location loc1 = new Location("Besiktas Square", "Besiktas Address");
+            Location loc2 = new Location("Mezzo Pub", "Taksim");
 
             locationRepository.save(loc1);
             locationRepository.save(loc2);
@@ -61,8 +63,28 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Locations initialized.");
         }
 
-        // Initialize Reservations
-        if (reservationRepository.count() == 0) {
+        if (equipmentRepository.count() == 0) {
+            Equipment equipment1 = new Equipment("Baby Seat", 500);
+            Equipment equipment2 = new Equipment("Snow Tyres", 1500);
+
+            equipmentRepository.save(equipment1);
+            equipmentRepository.save(equipment2);
+
+            System.out.println("Equipment initialized.");
+        }
+
+        if (customerServiceRepository.count() == 0) {
+            CustomerService customerService1 = new CustomerService("Additional Driver", 10000);
+            CustomerService customerService2 = new CustomerService("Roadside Assistant", 1000);
+
+            customerServiceRepository.save(customerService1);
+            customerServiceRepository.save(customerService2);
+
+            System.out.println("Service initialized.");
+        }
+
+
+        if (reservationRepository.count() == 1) {
             Member alice = memberRepository.findById(1).orElseThrow(() -> new RuntimeException("Member not found"));
             Car car1 = carRepository.findById("12345").orElseThrow(() -> new RuntimeException("Car not found"));
 
@@ -74,14 +96,32 @@ public class DataInitializer implements CommandLineRunner {
             Reservation reservation = new Reservation();
             reservation.setReservationNumber("RES12345");
             reservation.setCreationDate(new Date());
-            // Pick-up date: December 1, 2024, 10:00 AM
+
             Calendar pickUpCalendar = Calendar.getInstance();
-            pickUpCalendar.set(2024, Calendar.DECEMBER, 1, 10, 0); // December is 11 (0-based)
+            pickUpCalendar.set(2024, Calendar.JULY, 7, 10, 0);
             Date pickUpDate = pickUpCalendar.getTime();
-            // Drop-off date: December 5, 2024, 10:00 AM
+
             Calendar dropOffCalendar = Calendar.getInstance();
-            dropOffCalendar.set(2024, Calendar.DECEMBER, 5, 10, 0); // December is 11 (0-based)
+            dropOffCalendar.set(2024, Calendar.JULY, 8, 10, 0);
             Date dropOffDate = dropOffCalendar.getTime();
+
+            Calendar returnCalendar = Calendar.getInstance();
+            returnCalendar.set(2024, Calendar.JULY, 11, 10, 0);
+            Date returnDate = dropOffCalendar.getTime();
+
+            Equipment equipment1 = equipmentRepository.findByCode(1);
+            Equipment equipment2 = equipmentRepository.findByCode(2);
+
+            List<Equipment> equipmentList = new ArrayList<>();
+            equipmentList.add(equipment1);
+            equipmentList.add(equipment2);
+
+            CustomerService service1 = customerServiceRepository.findByCode(1);
+            CustomerService service2 = customerServiceRepository.findByCode(2);
+
+            List<CustomerService> customerServiceList = new ArrayList<>();
+            customerServiceList.add(service1);
+            customerServiceList.add(service2);
 
             reservation.setPickUpDateTime(pickUpDate);
             reservation.setDropOffDateTime(dropOffDate);
@@ -89,6 +129,10 @@ public class DataInitializer implements CommandLineRunner {
             reservation.setDropOffLocation(dropOffLocation);
             reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
             reservation.setMember(alice);
+            reservation.setCar(car1);
+            reservation.setReturnDateTime(returnDate);
+            reservation.setEquipments(equipmentList);
+            reservation.setCustomerServices(customerServiceList);
 
             reservationRepository.save(reservation);
 

@@ -10,25 +10,15 @@ public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
     private int code;
     private String name;
     private String address;
 
     public Location() {}
 
-    public Location(int code, String name, String address) {
-        this.code = code;
+    public Location(String name, String address) {
         this.name = name;
         this.address = address;
-    }
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode( int code) {
-        this.code = code;
     }
 
     public String getName() {

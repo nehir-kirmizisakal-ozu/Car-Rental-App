@@ -78,7 +78,7 @@ class ReservationServiceTests {
         when(reservationRepo.findById(reservationNumber)).thenReturn(Optional.of(reservation));
         when(reservationMapper.reservationToDTO(reservation)).thenReturn(expectedDTO);
 
-        Optional<ReservationDTO> result = reservationService.getReservationById(reservationNumber);
+        ReservationDTO result = reservationService.getReservationById(reservationNumber);
 
         assertTrue(result.isPresent(), "Result should be present");
         assertEquals(expectedDTO.getReservationNumber(), result.get().getReservationNumber(), "Reservation number should match");

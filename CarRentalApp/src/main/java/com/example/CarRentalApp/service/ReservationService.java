@@ -42,9 +42,9 @@ public class ReservationService {
         return dtoList;
     }
 
-    public Optional<ReservationDTO> getReservationById(String id) {
-        Optional<Reservation> reservation = reservationRepo.findById(id);
-        return reservation.map(reservationMapper::reservationToDTO);
+    public ReservationDTO getReservationById(String id) {
+        Reservation reservation = reservationRepo.findById(id).get();
+        return reservationMapper.reservationToDTO(reservation);
     }
     public boolean addServiceToReservation(String reservationNumber, int serviceCode) {
         Reservation reservation = reservationRepo.findByReservationNumber(reservationNumber);
@@ -170,7 +170,7 @@ public class ReservationService {
         reservation.setPickUpLocation(pickUpLocation);
         reservation.setDropOffLocation(dropOffLocation);
         reservation.setMember(member);
-        reservation.setStatus(Reservation.ReservationStatus.ACTIVE);
+        reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
         reservation.setCustomerServices(additionalServices);
         reservation.setEquipments(additionalEquipments);
         reservation.setCar(car);
