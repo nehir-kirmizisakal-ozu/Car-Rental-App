@@ -8,9 +8,11 @@ import com.example.CarRentalApp.model.Location;
 import com.example.CarRentalApp.model.Member;
 import com.example.CarRentalApp.model.Reservation;
 import com.example.CarRentalApp.repository.CarRepo;
+import com.example.CarRentalApp.repository.LocationRepo;
 import com.example.CarRentalApp.repository.MemberRepo;
 import com.example.CarRentalApp.repository.ReservationRepo;
 import com.example.CarRentalApp.service.CarService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,11 @@ import java.util.Optional;
 import static com.example.CarRentalApp.model.Car.CarStatus.AVAILABLE;
 import static com.example.CarRentalApp.model.Car.CarStatus.LOANED;
 import static com.example.CarRentalApp.model.Car.CarType.ECONOMY;
+import static com.example.CarRentalApp.model.Reservation.ReservationStatus.CONFIRMED;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 class CarServiceTests {
 
     @Autowired
@@ -42,6 +46,9 @@ class CarServiceTests {
 
     @Autowired
     private MemberRepo memberRepo;
+
+    @Autowired
+    private LocationRepo locationRepo;
 
     @BeforeEach
     void setUp() {
@@ -99,34 +106,53 @@ class CarServiceTests {
 
     @Test
     void testGetAllRentedCars() {
-        Car car = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
+
+        Car car = new Car();
+        car.setBarcode("87515");
+        car.setBrand("Toyota");
+        car.setModel("Corolla");
+        car.setTransmissionType("Automatic");
+        car.setCarStatus(LOANED);
+        car.setCarType(Car.CarType.ECONOMY);
         carRepo.save(car);
 
-        Member member = new Member("John Doe", "USA", "john.doe@example.com", "123456789", "D1234567");
+        Member member = new Member();
+        member.setAddress("USA");
+        member.setName("John Doe");
+        member.setEmail("john.doe@example.com");
+        member.setPhone("123456789");
         memberRepo.save(member);
 
+
+        Location pickUpLocation = new Location("PickUp", "123 Street, City");
+        Location dropOffLocation = new Location("DropOff", "456 Street, City");
+        locationRepo.save(pickUpLocation);
+        locationRepo.save(dropOffLocation);
+
         Reservation reservation = new Reservation();
-        reservation.setReservationNumber("R123589");
+        reservation.setReservationNumber("R123578");
         reservation.setCreationDate(new Date(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000))); // 2 days ago
         reservation.setPickUpDateTime(new Date(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000))); // 3 days ago
         reservation.setDropOffDateTime(new Date());
-        reservation.setPickUpLocation(new Location("PickUp", "123 Street, City"));
-        reservation.setDropOffLocation(new Location("DropOff", "456 Street, City"));
+        reservation.setPickUpLocation(pickUpLocation);
+        reservation.setDropOffLocation(dropOffLocation);
         reservation.setCar(car);
         reservation.setMember(member);
-        reservation.setStatus(Reservation.ReservationStatus.CONFIRMED);
+        reservation.setStatus(CONFIRMED);
         reservationRepo.save(reservation);
 
         List<RentedCarDTO> rentedCars = carService.getAllRentedCars();
 
+        // Assertions
         assertNotNull(rentedCars);
         assertEquals(1, rentedCars.size());
         RentedCarDTO dto = rentedCars.get(0);
         assertEquals("Toyota", dto.getBrand());
         assertEquals("Corolla", dto.getModel());
-        assertEquals(2, dto.getReservationDays());
+        assertEquals(3, dto.getReservationDays()); // Check calculated reservation days
         assertEquals("John Doe", dto.getMemberName());
-        assertEquals("R123", dto.getReservationNumber());
+        assertEquals("R123578", dto.getReservationNumber());
     }
+
 
 }
