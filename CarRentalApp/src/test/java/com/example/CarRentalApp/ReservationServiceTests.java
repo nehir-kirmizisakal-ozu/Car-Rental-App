@@ -92,7 +92,7 @@ class ReservationServiceTests {
         car.setCarStatus(Car.CarStatus.AVAILABLE);
         carRepo.save(car);
 
-        Member member = new Member("John", "Doe", "john@example.com", "123-456-7890", "DL1245");
+        Member member = new Member("John", "USA", "john@example.com", "123-456-7890", "DL1245");
         memberRepo.save(member);
 
         Location pickUpLocation = new Location("Location A", "Address A");
@@ -109,7 +109,7 @@ class ReservationServiceTests {
         List<Integer> additionalServiceCodes = Arrays.asList(service.getCode());
 
         ReservationDTO reservationDTO = reservationService.makeReservation(
-                "ABC123", 5, 2, 1, 2, additionalEquipmentCodes, additionalServiceCodes);
+                "ABC123", 5, member.getId(), pickUpLocation.getCode(), dropOffLocation.getCode(), additionalEquipmentCodes, additionalServiceCodes);
 
         assertNotNull(reservationDTO);
         assertEquals(8, reservationDTO.getReservationNumber().length());
@@ -137,11 +137,10 @@ class ReservationServiceTests {
         reservationRepo.save(reservation);
 
         CustomerService customerService = new CustomerService();
-        customerService.setCode(3);
         customerService.setName("GPS Navigation");
         customerServiceRepo.save(customerService);
 
-        boolean result = reservationService.addServiceToReservation("R12345", 2);
+        boolean result = reservationService.addServiceToReservation("R12345", customerService.getCode());
 
         assertTrue(result);
     }
@@ -154,11 +153,10 @@ class ReservationServiceTests {
         reservationRepo.save(reservation);
 
         Equipment equipment = new Equipment();
-        equipment.setCode(3);
         equipment.setName("Child Seat");
         equipmentRepo.save(equipment);
 
-        boolean result = reservationService.addEquipmentToReservation("R12345", 2);
+        boolean result = reservationService.addEquipmentToReservation("R12345", equipment.getCode());
 
         assertTrue(result);
     }
