@@ -148,7 +148,7 @@ public class ReservationService {
         List<Equipment> additionalEquipments = equipmentRepo.findAllByCodeIn(additionalEquipmentCodes);
         List<CustomerService> additionalServices = customerServiceRepo.findAllByCodeIn(additionalServiceCodes);
 
-        String reservationNumber = UUID.randomUUID().toString().substring(0, 8);
+        String reservationNumber = UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
         Date creationDate = new Date();
         Date pickUpDateTime = new Date(System.currentTimeMillis() + 86400000);

@@ -12,5 +12,7 @@ public interface ReservationRepo extends JpaRepository<Reservation, String> {
 
     public Reservation findByReservationNumber(String reservationNumber);
     public List<Reservation> findByCar(Car car);
+
+    List<Reservation> findByCar_StatusIn(List<Car.CarStatus> statuses);
     List<Reservation> findByStatusIn(List<Car.CarStatus> statuses);
 }

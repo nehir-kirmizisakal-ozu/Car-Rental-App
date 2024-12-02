@@ -84,7 +84,7 @@ public class DataInitializer implements CommandLineRunner {
         }
 
 
-        if (reservationRepository.count() == 1) {
+        if (reservationRepository.count() == 0) {
             Member alice = memberRepository.findById(1).orElseThrow(() -> new RuntimeException("Member not found"));
             Car car1 = carRepository.findById("12345").orElseThrow(() -> new RuntimeException("Car not found"));
 

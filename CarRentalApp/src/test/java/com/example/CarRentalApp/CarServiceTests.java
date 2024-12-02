@@ -13,23 +13,19 @@ import com.example.CarRentalApp.repository.MemberRepo;
 import com.example.CarRentalApp.repository.ReservationRepo;
 import com.example.CarRentalApp.service.CarService;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.CarRentalApp.model.Car.CarStatus.AVAILABLE;
 import static com.example.CarRentalApp.model.Car.CarStatus.LOANED;
 import static com.example.CarRentalApp.model.Car.CarType.ECONOMY;
-import static com.example.CarRentalApp.model.Reservation.ReservationStatus.CONFIRMED;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Transactional
 class CarServiceTests {
 
     @Autowired
@@ -50,13 +46,8 @@ class CarServiceTests {
     @Autowired
     private LocationRepo locationRepo;
 
-    @BeforeEach
-    void setUp() {
-        carRepo.deleteAll();
-        reservationRepo.deleteAll();
-    }
-
     @Test
+    @Transactional
     void testGetCar() {
         Car car = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         carRepo.save(car);
@@ -68,6 +59,7 @@ class CarServiceTests {
     }
 
     @Test
+    @Transactional
     void testGetCars() {
         Car car1 = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         Car car2 = new Car("67890", "456DEF", 5, "Honda", "Civic", 30000, "Manual", 60, ECONOMY);
@@ -80,6 +72,7 @@ class CarServiceTests {
     }
 
     @Test
+    @Transactional
     void testSearchAvailableCars() {
         Car car1 = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         car1.setCarStatus(AVAILABLE);
@@ -93,18 +86,20 @@ class CarServiceTests {
     }
 
     @Test
+    @Transactional
     void testDeleteCar() {
-        Car car = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
+        Car car = new Car("1234", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         carRepo.save(car);
 
-        boolean result = carService.deleteCar("12345");
+        boolean result = carService.deleteCar("1234");
 
         assertTrue(result);
-        Car deletedCar = carRepo.findById("12345").orElse(null);
+        Car deletedCar = carRepo.findById("1234").orElse(null);
         assertNull(deletedCar, "The car should be null after deletion.");
     }
 
     @Test
+    @Transactional
     void testGetAllRentedCars() {
 
         Car car = new Car();
@@ -131,25 +126,23 @@ class CarServiceTests {
 
         Reservation reservation = new Reservation();
         reservation.setReservationNumber("R123578");
-        reservation.setCreationDate(new Date(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000))); // 2 days ago
-        reservation.setPickUpDateTime(new Date(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000))); // 3 days ago
+        reservation.setCreationDate(new Date(System.currentTimeMillis() - (3 * 24 * 60 * 60 * 1000)));
+        reservation.setPickUpDateTime(new Date(System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000) ));
         reservation.setDropOffDateTime(new Date());
         reservation.setPickUpLocation(pickUpLocation);
         reservation.setDropOffLocation(dropOffLocation);
         reservation.setCar(car);
         reservation.setMember(member);
-        reservation.setStatus(CONFIRMED);
         reservationRepo.save(reservation);
 
         List<RentedCarDTO> rentedCars = carService.getAllRentedCars();
 
-        // Assertions
         assertNotNull(rentedCars);
         assertEquals(1, rentedCars.size());
         RentedCarDTO dto = rentedCars.get(0);
         assertEquals("Toyota", dto.getBrand());
         assertEquals("Corolla", dto.getModel());
-        assertEquals(3, dto.getReservationDays()); // Check calculated reservation days
+        assertEquals(2, dto.getReservationDays());
         assertEquals("John Doe", dto.getMemberName());
         assertEquals("R123578", dto.getReservationNumber());
     }

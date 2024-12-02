@@ -1,6 +1,8 @@
 package com.example.CarRentalApp.model;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,11 +23,11 @@ public class Reservation {
     private Member member;
     private ReservationStatus status;
 
-    @OneToMany
-    private List<CustomerService> customerServices;
+    @OneToMany (cascade = CascadeType.MERGE)
+    private List<CustomerService> customerServices = new ArrayList<>();
 
-    @OneToMany
-    private List<Equipment> equipments;
+    @OneToMany (cascade = CascadeType.MERGE)
+    private List<Equipment> equipments = new ArrayList<>();
     @OneToOne
     private Car car;
 

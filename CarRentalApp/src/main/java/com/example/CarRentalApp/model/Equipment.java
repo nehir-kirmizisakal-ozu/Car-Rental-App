@@ -33,4 +33,12 @@ public class Equipment {
     public void setPrice(double price) {
         this.price = price;
     }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
+    }
 }

@@ -3,6 +3,7 @@ package com.example.CarRentalApp.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,9 +18,8 @@ public class Member {
     private String phone;
     private String drivingLicenseNumber;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "member")
-    private List<Reservation> reservations;
+    @OneToMany(mappedBy = "member", cascade = CascadeType.MERGE)
+    private List<Reservation> reservations = new ArrayList<>();
 
     public Member(String name, String address, String email, String phone, String drivingLicenseNumber) {
         this.name = name;
@@ -29,6 +29,14 @@ public class Member {
         this.drivingLicenseNumber = drivingLicenseNumber;
     }
     public Member(){}
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
