@@ -14,7 +14,8 @@ public class Location {
     private String name;
     private String address;
 
-    public Location() {}
+    public Location() {
+    }
 
     public Location(String name, String address) {
         this.name = name;
@@ -44,4 +45,5 @@ public class Location {
     public void setAddress(String address) {
         this.address = address;
     }
+
 }

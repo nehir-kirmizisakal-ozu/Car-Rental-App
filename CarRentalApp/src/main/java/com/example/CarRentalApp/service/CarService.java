@@ -88,7 +88,6 @@ public class CarService {
             Car car = reservation.getCar();
             Member member = reservation.getMember();
 
-            // Create DTO for each reservation
             RentedCarDTO dto = new RentedCarDTO(
                     car.getBrand(),
                     car.getModel(),

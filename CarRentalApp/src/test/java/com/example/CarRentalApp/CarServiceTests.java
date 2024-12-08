@@ -68,7 +68,7 @@ class CarServiceTests {
         List<CarDTO> result = carService.getCars();
 
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(3, result.size());
     }
 
     @Test
