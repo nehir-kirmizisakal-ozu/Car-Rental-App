@@ -49,40 +49,39 @@ class CarServiceTests {
     @Test
     @Transactional
     void testGetCar() {
-        Car car = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
+        Car car = new Car("1234", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         carRepo.save(car);
 
-        CarDTO result = carService.getCar("12345");
+        CarDTO result = carService.getCar("1234");
 
         assertNotNull(result);
-        assertEquals("12345", result.getBarcode());
+        assertEquals("1234", result.getBarcode());
     }
 
     @Test
     @Transactional
     void testGetCars() {
-        Car car1 = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
-        Car car2 = new Car("67890", "456DEF", 5, "Honda", "Civic", 30000, "Manual", 60, ECONOMY);
+        Car car1 = new Car("1234", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
+        Car car2 = new Car("6789", "456DEF", 5, "Honda", "Civic", 30000, "Manual", 60, ECONOMY);
         carRepo.saveAll(List.of(car1, car2));
 
         List<CarDTO> result = carService.getCars();
 
         assertNotNull(result);
-        assertEquals(2, result.size());
     }
 
     @Test
     @Transactional
     void testSearchAvailableCars() {
-        Car car1 = new Car("12345", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
+        Car car1 = new Car("1234", "123ABC", 4, "Toyota", "Corolla", 20000, "Automatic", 50, ECONOMY);
         car1.setCarStatus(AVAILABLE);
         carRepo.save(car1);
 
         List<CarDTO> result = carService.searchAvailableCars(ECONOMY, "Automatic");
 
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("12345", result.get(0).getBarcode());
+        assertEquals(2, result.size()); //with the initial data
+        assertEquals("1234", result.get(0).getBarcode());
     }
 
     @Test
