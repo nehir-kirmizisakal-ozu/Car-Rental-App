@@ -35,7 +35,7 @@ public class CarController {
             @ApiResponse(responseCode = "404", description = "No available cars found",
                     content = @Content)
     })
-    @GetMapping("/search")
+    @GetMapping("/status/available")
     public ResponseEntity<List<CarDTO>> searchAvailableCars(
             @RequestParam Car.CarType carType,
             @RequestParam String transmissionType) {
@@ -50,16 +50,16 @@ public class CarController {
 
 
     @Operation(
-            summary = "Get all rented or reserved cars",
-            description = "Returns a list of cars that are either rented or reserved."
+            summary = "Get all loaned or reserved cars",
+            description = "Returns a list of cars that are either loaned or reserved."
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode = "200", description = "Rented or reserved cars found",
+                    responseCode = "200", description = "Loaned or reserved cars found",
                     content = @Content(schema = @Schema(implementation = RentedCarDTO.class))
             ),
             @ApiResponse(
-                    responseCode = "404", description = "No rented or reserved cars found",
+                    responseCode = "404", description = "No loaned or reserved cars found",
                     content = @Content
             )
     })
@@ -72,10 +72,9 @@ public class CarController {
         return ResponseEntity.ok(rentedCars);
     }
 
-
     @Operation(
             summary = "Delete a car by barcode",
-            description = "Deletes a car if it's available and not in a reservation."
+            description = "Deletes a car if it is available and not in a reservation."
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Car deleted successfully"),
@@ -86,6 +85,11 @@ public class CarController {
     @DeleteMapping("/{barcode}")
     public ResponseEntity<Void> deleteCar(@PathVariable String barcode) {
         try {
+            boolean exists = carService.checkIfCarExists(barcode);
+            if (!exists) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
             boolean isDeleted = carService.deleteCar(barcode);
             if (!isDeleted) {
                 return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -95,6 +99,7 @@ public class CarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
 
 }

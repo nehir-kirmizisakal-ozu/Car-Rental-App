@@ -74,15 +74,20 @@ public class CarService {
         return true;
     }
 
+    public boolean checkIfCarExists(String barcode) {
+        return carRepo.existsByBarcode(barcode);
+    }
+
+
     public List<RentedCarDTO> getAllRentedCars() {
 
         List<Reservation> reservations = reservationRepo.findByCar_StatusIn(List.of(Car.CarStatus.LOANED, Car.CarStatus.RESERVED));
 
-        if (reservations.isEmpty()) {
-            throw new IllegalStateException("No rented or reserved cars found.");
-        }
-
         List<RentedCarDTO> rentedCarDTOs = new ArrayList<>();
+
+        if (reservations.isEmpty()) {
+            return rentedCarDTOs;
+        }
 
         for (Reservation reservation : reservations) {
             Car car = reservation.getCar();

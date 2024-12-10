@@ -14,21 +14,21 @@ public class Reservation {
     private Date creationDate;
     private Date pickUpDateTime;
     private Date dropOffDateTime;
-    @OneToOne
+    @ManyToOne
     private Location pickUpLocation;
-    @OneToOne
+    @ManyToOne
     private Location dropOffLocation;
     private Date returnDateTime;
     @ManyToOne
     private Member member;
     private ReservationStatus status;
 
-    @OneToMany (cascade = CascadeType.MERGE)
+    @ManyToMany (cascade = CascadeType.MERGE)
     private List<CustomerService> customerServices = new ArrayList<>();
 
-    @OneToMany (cascade = CascadeType.MERGE)
+    @ManyToMany (cascade = CascadeType.MERGE)
     private List<Equipment> equipments = new ArrayList<>();
-    @OneToOne
+    @ManyToOne
     private Car car;
 
     public Reservation(String reservationNumber, Date creationDate, Date pickUpDateTime, Date dropOffDateTime, Location pickUpLocation,

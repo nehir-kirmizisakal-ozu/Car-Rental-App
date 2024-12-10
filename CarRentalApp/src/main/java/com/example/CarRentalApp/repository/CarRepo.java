@@ -12,6 +12,7 @@ public interface CarRepo extends JpaRepository<Car, String> {
 
     Car findByBarcode(String barcode);
 
+    boolean existsByBarcode(String barcode);
 }
 
 
