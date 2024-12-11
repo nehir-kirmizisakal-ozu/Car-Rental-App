@@ -86,7 +86,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Equipment not found or already added", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    @PostMapping("/{reservationNumber}/equipment")
+    @PostMapping("/{reservationNumber}/equipments")
     public ResponseEntity<Void> addEquipmentToReservation(
             @PathVariable String reservationNumber,
             @RequestParam int equipmentCode) {
@@ -113,7 +113,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Reservation not found or car not found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    @PostMapping("/{reservationNumber}/return")
+    @PutMapping("/{reservationNumber}/return-car")
     public ResponseEntity<Void> returnCar(@PathVariable String reservationNumber) {
         try {
             boolean isReturned = reservationService.returnCar(reservationNumber);
@@ -150,5 +150,27 @@ public class ReservationController {
         }
     }
 
+    @Operation(
+            summary = "Cancel a reservation",
+            description = "Cancels a reservation and updates the reservation and car statuses."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Reservation cancelled successfully"),
+            @ApiResponse(responseCode = "404", description = "Reservation not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    @PutMapping("/cancel/{reservationNumber}")
+    public ResponseEntity<Void> cancelReservation(@PathVariable String reservationNumber) {
+        try {
+            boolean isCancelled = reservationService.cancelReservation(reservationNumber);
+            if (isCancelled) {
+                return ResponseEntity.status(HttpStatus.OK).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
 }
