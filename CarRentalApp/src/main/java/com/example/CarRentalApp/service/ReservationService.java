@@ -1,6 +1,9 @@
 package com.example.CarRentalApp.service;
 
+import com.example.CarRentalApp.dto.EquipmentAdditionRequestDTO;
 import com.example.CarRentalApp.dto.ReservationDTO;
+import com.example.CarRentalApp.dto.ReservationRequestDTO;
+import com.example.CarRentalApp.dto.ServiceAdditionRequestDTO;
 import com.example.CarRentalApp.mapper.ReservationMapper;
 import com.example.CarRentalApp.model.*;
 import com.example.CarRentalApp.repository.*;
@@ -46,12 +49,12 @@ public class ReservationService {
         Reservation reservation = reservationRepo.findById(id).get();
         return reservationMapper.reservationToDTO(reservation);
     }
-    public boolean addServiceToReservation(String reservationNumber, int serviceCode) {
-        Reservation reservation = reservationRepo.findByReservationNumber(reservationNumber);
+    public boolean addServiceToReservation(ServiceAdditionRequestDTO requestDTO) {
+        Reservation reservation = reservationRepo.findByReservationNumber(requestDTO.getReservationNumber());
         if (reservation == null) {
             return false;
         }
-        CustomerService customerService = customerServiceRepo.findByCode(serviceCode);
+        CustomerService customerService = customerServiceRepo.findByCode(requestDTO.getServiceCode());
         if (customerService == null) {
             return false;
         }
@@ -63,12 +66,12 @@ public class ReservationService {
         return true;
     }
 
-    public boolean addEquipmentToReservation(String reservationNumber, int equipmentCode) {
-        Reservation reservation = reservationRepo.findByReservationNumber(reservationNumber);
+    public boolean addEquipmentToReservation(EquipmentAdditionRequestDTO requestDTO) {
+        Reservation reservation = reservationRepo.findByReservationNumber(requestDTO.getReservationNumber());
         if (reservation == null) {
             return false;
         }
-        Equipment equipment = equipmentRepo.findByCode(equipmentCode);
+        Equipment equipment = equipmentRepo.findByCode(requestDTO.getEquipmentCode());
         if (equipment == null) {
             return false;
         }
@@ -130,9 +133,15 @@ public class ReservationService {
         return true;
     }
 
-    public ReservationDTO makeReservation(String carBarcode, int dayCount, int memberId, int pickUpLocationCode,
-                                          int dropOffLocationCode, List<Integer> additionalEquipmentCodes,
-                                          List<Integer> additionalServiceCodes) {
+    public ReservationDTO makeReservation(ReservationRequestDTO request) {
+
+        String carBarcode = request.getCarBarcode();
+        int dayCount = request.getDayCount();
+        int memberId = request.getMemberId();
+        int pickUpLocationCode = request.getPickUpLocationCode();
+        int dropOffLocationCode = request.getDropOffLocationCode();
+        List<Integer> additionalEquipmentCodes = request.getAdditionalEquipments();
+        List<Integer> additionalServiceCodes = request.getAdditionalServices();
 
         Car car = carRepo.findByBarcode(carBarcode);
 

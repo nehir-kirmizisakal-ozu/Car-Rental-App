@@ -1,6 +1,9 @@
 package com.example.CarRentalApp.controller;
 
+import com.example.CarRentalApp.dto.EquipmentAdditionRequestDTO;
 import com.example.CarRentalApp.dto.ReservationDTO;
+import com.example.CarRentalApp.dto.ReservationRequestDTO;
+import com.example.CarRentalApp.dto.ServiceAdditionRequestDTO;
 import com.example.CarRentalApp.service.ReservationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/reservations")
@@ -31,20 +33,10 @@ public class ReservationController {
             @ApiResponse(responseCode = "406", description = "Selected car is not available",
                     content = @Content)
     })
-    @PostMapping("/{carBarcode}")
-    public ResponseEntity<ReservationDTO> makeReservation(
-            @PathVariable String carBarcode,
-            @RequestParam int dayCount,
-            @RequestParam int memberId,
-            @RequestParam int pickUpLocationCode,
-            @RequestParam int dropOffLocationCode,
-            @RequestParam List<Integer> additionalEquipments,
-            @RequestParam List<Integer> additionalServices) {
-
+    @PostMapping
+    public ResponseEntity<ReservationDTO> makeReservation(@RequestBody ReservationRequestDTO request) {
         try {
-            ReservationDTO reservationResponse = reservationService.makeReservation(
-                    carBarcode, dayCount, memberId, pickUpLocationCode, dropOffLocationCode, additionalEquipments, additionalServices);
-
+            ReservationDTO reservationResponse = reservationService.makeReservation(request);
             return ResponseEntity.ok(reservationResponse);
         } catch (IllegalStateException e) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).build();
@@ -60,13 +52,10 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Service not found or already added", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    @PostMapping("/{reservationNumber}/services")
-    public ResponseEntity<Void> addServiceToReservation(
-            @PathVariable String reservationNumber,
-            @RequestParam int serviceCode) {
-
+    @PostMapping("/services")
+    public ResponseEntity<Void> addServiceToReservation(@RequestBody ServiceAdditionRequestDTO request) {
         try {
-            boolean isAdded = reservationService.addServiceToReservation(reservationNumber, serviceCode);
+            boolean isAdded = reservationService.addServiceToReservation(request);
             if (isAdded) {
                 return ResponseEntity.status(HttpStatus.OK).build();
             } else {
@@ -86,13 +75,10 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Equipment not found or already added", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    @PostMapping("/{reservationNumber}/equipments")
-    public ResponseEntity<Void> addEquipmentToReservation(
-            @PathVariable String reservationNumber,
-            @RequestParam int equipmentCode) {
-
+    @PostMapping("/equipments")
+    public ResponseEntity<Void> addEquipmentToReservation(@RequestBody EquipmentAdditionRequestDTO request) {
         try {
-            boolean isAdded = reservationService.addEquipmentToReservation(reservationNumber, equipmentCode);
+            boolean isAdded = reservationService.addEquipmentToReservation(request);
             if (isAdded) {
                 return ResponseEntity.status(HttpStatus.OK).build();
             } else {
@@ -101,7 +87,6 @@ public class ReservationController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-
     }
 
     @Operation(
@@ -113,7 +98,7 @@ public class ReservationController {
             @ApiResponse(responseCode = "404", description = "Reservation not found or car not found", content = @Content),
             @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content)
     })
-    @PutMapping("/{reservationNumber}/return-car")
+    @PutMapping("/return-car/{reservationNumber}")
     public ResponseEntity<Void> returnCar(@PathVariable String reservationNumber) {
         try {
             boolean isReturned = reservationService.returnCar(reservationNumber);

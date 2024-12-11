@@ -1,6 +1,9 @@
 package com.example.CarRentalApp;
 
+import com.example.CarRentalApp.dto.EquipmentAdditionRequestDTO;
 import com.example.CarRentalApp.dto.ReservationDTO;
+import com.example.CarRentalApp.dto.ReservationRequestDTO;
+import com.example.CarRentalApp.dto.ServiceAdditionRequestDTO;
 import com.example.CarRentalApp.mapper.ReservationMapper;
 import com.example.CarRentalApp.model.*;
 import com.example.CarRentalApp.repository.*;
@@ -108,8 +111,16 @@ class ReservationServiceTests {
         List<Integer> additionalEquipmentCodes = Arrays.asList(equipment.getCode());
         List<Integer> additionalServiceCodes = Arrays.asList(service.getCode());
 
-        ReservationDTO reservationDTO = reservationService.makeReservation(
-                "ABC123", 5, member.getId(), pickUpLocation.getCode(), dropOffLocation.getCode(), additionalEquipmentCodes, additionalServiceCodes);
+        ReservationRequestDTO request = new ReservationRequestDTO();
+        request.setCarBarcode("ABC123");
+        request.setDayCount(5);
+        request.setMemberId(member.getId());
+        request.setPickUpLocationCode(pickUpLocation.getCode());
+        request.setDropOffLocationCode(dropOffLocation.getCode());
+        request.setAdditionalEquipments(additionalEquipmentCodes);
+        request.setAdditionalServices(additionalServiceCodes);
+
+        ReservationDTO reservationDTO = reservationService.makeReservation(request);
 
         assertNotNull(reservationDTO);
         assertEquals(8, reservationDTO.getReservationNumber().length());
@@ -140,7 +151,11 @@ class ReservationServiceTests {
         customerService.setName("GPS Navigation");
         customerServiceRepo.save(customerService);
 
-        boolean result = reservationService.addServiceToReservation("R12345", customerService.getCode());
+        ServiceAdditionRequestDTO requestDTO = new ServiceAdditionRequestDTO();
+        requestDTO.setReservationNumber("R12345");
+        requestDTO.setServiceCode(customerService.getCode());
+
+        boolean result = reservationService.addServiceToReservation(requestDTO);
 
         assertTrue(result);
     }
@@ -156,7 +171,12 @@ class ReservationServiceTests {
         equipment.setName("Child Seat");
         equipmentRepo.save(equipment);
 
-        boolean result = reservationService.addEquipmentToReservation("R12345", equipment.getCode());
+        EquipmentAdditionRequestDTO requestDTO = new EquipmentAdditionRequestDTO();
+        requestDTO.setReservationNumber("R12345");
+        requestDTO.setEquipmentCode(equipment.getCode());
+
+        boolean result = reservationService.addEquipmentToReservation(requestDTO);
+
 
         assertTrue(result);
     }

@@ -35,7 +35,7 @@ public class CarController {
             @ApiResponse(responseCode = "404", description = "No available cars found",
                     content = @Content)
     })
-    @GetMapping("/status/available")
+    @GetMapping("/available")
     public ResponseEntity<List<CarDTO>> searchAvailableCars(
             @RequestParam Car.CarType carType,
             @RequestParam String transmissionType) {
